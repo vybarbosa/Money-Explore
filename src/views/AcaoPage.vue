@@ -1,6 +1,6 @@
 <template>
-  <div v-if="acaoBuscada == null">
-    <h1>Carregando...</h1>
+  <div class="loading" v-if="acaoBuscada == null">
+    <Loading />
   </div>
   <div v-else v-for="acao in acaoBuscada" :key="acao.symbol" class="container">
     <div class="capa">
@@ -35,19 +35,62 @@
         <h2 v-else>--</h2>
       </div>
     </div>
-    <div class="content">
-      <p>Gráfico</p>
+    <div class="container-grafico">
+      <div class="content">
+        <h1>Atualização: (5 dias)</h1>
+        <Line :data="data" :options="options" />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import { api } from "../services.js";
+import Loading from "../components/Loading.vue";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js'
+import { Line } from 'vue-chartjs'
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+)
+
 export default {
   data() {
     return {
       acaoBuscada: null,
+      data: {
+        labels: [],
+        datasets: [
+          {
+            label: 'Preço fechamento',
+            backgroundColor: '#56adff',
+            data: []
+          }
+        ]
+      },
+      options: {
+        responsive: true
+      }
     };
+  },
+  components: {
+    Line,
+    Loading
   },
   computed: {
     acao() {
@@ -60,15 +103,27 @@ export default {
         .get(`quote/${this.acao}?range=5d&interval=1d&token=${import.meta.env.VITE_API_KEY}`)
         .then((response) => {
           this.acaoBuscada = response.data.results;
-          console.log(this.acaoBuscada)
           this.acaoBuscada.forEach((value) => {
+            this.buscarHistorioAcoes(value.historicalDataPrice) 
             value.regularMarketPrice = value.regularMarketPrice.toFixed(2)
             value.regularMarketChangePercent = value.regularMarketChangePercent.toFixed(2)
             value.fiftyTwoWeekLow = value.fiftyTwoWeekLow.toFixed(2)
             value.fiftyTwoWeekHigh= value.fiftyTwoWeekHigh.toFixed(2)
             value.fiftyTwoWeekHighChangePercent = value.fiftyTwoWeekHighChangePercent.toFixed(2)
           });
-        });
+        }).catch((e) => console.log(e));
+    },
+    buscarHistorioAcoes(acoes){
+      this.data.labels = []
+      this.data.datasets[0].data = []
+      acoes.forEach((el) => {
+        const data = new Date(el.date * 1000);
+        const dia = data.getDate()
+        const mes = data.getMonth() + 1
+        const diaEMes = `${dia}/${mes}`
+        this.data.labels.push(diaEMes)
+        this.data.datasets[0].data.push(el.close)
+      })
     },
   },
   created() {
@@ -85,6 +140,7 @@ export default {
 .capa {
   background: white;
   height: 230px;
+  width: 100%;
   background-image: url("../assets/imagens/grafico.png");
   background-repeat: no-repeat;
   background-position: top right;
@@ -129,12 +185,25 @@ export default {
 .price-current p, h2, span {
   margin: 0;
 }
-.content {
+
+.container-grafico {
   position: absolute;
   top: 100%;
   left: 0;
   width: 100%;
   background: white;
   margin-top: 60px;
+  padding: 30px;
+}
+.content {
+  width: 60%;
+}
+.content h1 {
+  font-size: 1.7rem;
+}
+.loading {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
 }
 </style>

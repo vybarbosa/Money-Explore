@@ -61,6 +61,8 @@ img {
 }
 .container-stock {
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  background: rgb(255, 255, 255);
+  border-radius: 10px;
   margin: 20px;
   padding: 20px;
   width: 30%;
