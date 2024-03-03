@@ -84,4 +84,13 @@ img {
 .preco-variacao span {
   color: red;
 }
+
+@media screen and (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .container-stock {
+    width: 90%;
+  }
+}
 </style>

@@ -25,7 +25,6 @@ header {
 }
 nav {
     width: 100%;
-    height: 120px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -43,5 +42,18 @@ nav {
 #logo {
   width: 327px;
   height: 144px;
+}
+@media screen and (max-width: 768px) {
+    nav {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .itens {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 0;
+    }
 }
 </style>

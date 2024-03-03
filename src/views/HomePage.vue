@@ -15,10 +15,10 @@
       <div class="title-home">
         <h2>Explore o mercado</h2>
       </div>
-      <div>
+      <div class="buttons">
         <span>Ordenar:</span>
-        <button @click="variationActivated = 'ActionsHigh'">Em Alta</button>
-        <button @click="variationActivated = 'ActionsLow'">Em Baixa</button>
+          <button @click="variationActivated = 'ActionsHigh'">Em Alta</button>
+          <button @click="variationActivated = 'ActionsLow'">Em Baixa</button>
       </div>
     </div>
     <keep-alive>
@@ -89,5 +89,21 @@ export default {
   }
   .ButtonsStockVariations button:hover {
     background: #2e5c86;
+  }
+  @media screen and (max-width: 768px) {
+    .container-input {
+      margin-top: 50px;
+    }
+    .input-group {
+      width: 70%;
+    }
+    .ButtonsStockVariations {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .buttons {
+      margin-top: 20px;
+    }
   }
 </style>

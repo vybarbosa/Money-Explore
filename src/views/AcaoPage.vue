@@ -1,5 +1,5 @@
 <template>
-  <div class="loading" v-if="acaoBuscada == null">
+  <div class="loading" v-if="acaoBuscada == null && mensagemErro == null">
     <Loading />
   </div>
   <div v-else v-for="acao in acaoBuscada" :key="acao.symbol" class="container">
@@ -42,6 +42,9 @@
       </div>
     </div>
   </div>
+  <div v-if="mensagemErro" class="mensagemErro">
+      <h2>{{ mensagemErro }}!</h2>
+  </div>
 </template>
 
 <script>
@@ -73,6 +76,7 @@ export default {
   data() {
     return {
       acaoBuscada: null,
+      mensagemErro: null,
       data: {
         labels: [],
         datasets: [
@@ -111,7 +115,11 @@ export default {
             value.fiftyTwoWeekHigh= value.fiftyTwoWeekHigh.toFixed(2)
             value.fiftyTwoWeekHighChangePercent = value.fiftyTwoWeekHighChangePercent.toFixed(2)
           });
-        }).catch((e) => console.log(e));
+        }).catch((error) => {
+          if(error.response){
+            this.mensagemErro = `Ativo ${this.acao} não foi encontrado`
+          }
+        });
     },
     buscarHistorioAcoes(acoes){
       this.data.labels = []
@@ -205,5 +213,30 @@ export default {
   display: flex;
   justify-content: center;
   margin-top: 30px;
+}
+.mensagemErro {
+  display: flex;
+  justify-content: center;
+}
+.mensagemErro h2 {
+  margin-top: 20px;
+}
+@media screen and (max-width: 768px) {
+  .container {
+    max-width: 100%;
+  }
+  .name-stock {
+    flex-direction: column;
+    align-items: center;
+  }
+  .stock-information {
+    position: static;
+    flex-direction: column;
+    align-items: center;
+  }
+  .price-current {
+    width: 300px;
+    margin-top: 20px;
+  }
 }
 </style>
