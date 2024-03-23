@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="container">
-      <div v-for="acao in acoes" :key="acao.stock" class="container-stock">
+      <div v-for="acao in acoes" :key="acao.stock" class="container-stock" @click="fetchAcao(acao)">
         <div class="content-stock">
           <div class="img-stock">
             <img :src="acao.logo" alt="logo" />
@@ -45,6 +45,11 @@ export default {
           });
         });
     },
+    fetchAcao (acao) {
+      if(acao.stock){
+        this.$router.push({name: 'acao', params: {acao: acao.stock}})
+      }
+    }
   },
   created() {
     this.fetchActions();
@@ -67,6 +72,10 @@ img {
   margin: 20px;
   padding: 20px;
   width: 30%;
+  cursor: pointer;
+}
+.container-stock:hover {
+  box-shadow: #053558 0px 2px 8px;
 }
 .name-sigla-stock {
   display: flex;

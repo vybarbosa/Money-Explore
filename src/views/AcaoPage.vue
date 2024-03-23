@@ -238,5 +238,8 @@ export default {
     width: 300px;
     margin-top: 20px;
   }
+  .content {
+    width: 100%;
+}
 }
 </style>
