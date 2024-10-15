@@ -17,25 +17,23 @@
       </div>
       <div class="buttons">
         <span>Ordenar:</span>
-          <button @click="variationActivated = 'ActionsHigh'">Em Alta</button>
-          <button @click="variationActivated = 'ActionsLow'">Em Baixa</button>
+          <button @click="actionHigh = true">Em Alta</button>
+          <button @click="actionHigh = false">Em Baixa</button>
       </div>
     </div>
-    <keep-alive>
-      <component :is="variationActivated"></component>
-    </keep-alive>
+    <ActionsVariation
+      :actionHigh="actionHigh"
+    />
   </div>
 </template>
 
 <script>
-import ActionsLow from '../components/ActionsLow.vue'
-import ActionsHigh from '../components/ActionsHigh.vue'
-import { markRaw } from 'vue';
+import ActionsVariation from '../components/ActionsVariation.vue'
 export default {
   data() {
     return {
       acao: null,
-      variationActivated: markRaw(ActionsHigh),
+      actionHigh: false
     };
   },
   methods: {
@@ -46,8 +44,7 @@ export default {
     }
   },
   components: {
-    ActionsLow,
-    ActionsHigh
+    ActionsVariation,
   }
 };
 </script>

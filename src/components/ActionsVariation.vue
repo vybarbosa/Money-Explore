@@ -13,7 +13,7 @@
           <h6>PREÇO DO ATIVO</h6>
           <div class="preco-variacao">
             <h2>R$ {{ acao.close }}</h2>
-            <span>{{ acao.change }} %</span>
+            <span :class="chageAcao(acao.change)">{{ acao.change }} %</span>
           </div>
         </div>
       </div>
@@ -22,7 +22,9 @@
 </template>
 
 <script>
-import { api } from "../services.js";
+import { fetchActionsHigh, fetchActionsLow } from "../services.js";
+
+
 export default {
   name: "ActionsLow",
   data() {
@@ -30,25 +32,45 @@ export default {
       acoes: [],
     };
   },
+
+  props: ['actionHigh'],
+
+  watch: {
+    actionHigh() {
+      this.fetchActions();
+      console.log(this.actionHigh)
+    }
+  },
+
   methods: {
-    fetchActions() {
-      api
-        .get(
-          `/quote/list?type=stock&sortBy=change&sortOrder=asc&limit=6&token=${import.meta.env.VITE_API_KEY}`
-        )
-        .then((response) => {
-          this.acoes = response.data.stocks;
-          this.acoes.forEach((element) => {
-            element.close = element.close.toFixed(2);
-            element.change = element.change.toFixed(2);
-          });
-        });
+    async fetchActions() {
+      try {
+        const acoesBuscadas = await this.fillActions();
+        this.acoes = acoesBuscadas
+        this.acoes.forEach((acao) => {
+          acao.close = acao.close.toFixed(2);
+          acao.change = acao.change.toFixed(2);
+        })
+      } catch (error) {
+        console.error("Erro ao buscar ações:", error);
+      }
     },
     fetchAcao (acao) {
       if(acao.stock){
         this.$router.push({name: 'acao', params: {acao: acao.stock}})
       }
-    }
+    },
+
+    chageAcao(change) {
+      return change > 0 ? 'high' : 'low';
+    },
+
+    fillActions() {
+      if (this.actionHigh) {
+        return fetchActionsHigh();
+      }
+      return fetchActionsLow();
+    },
   },
   created() {
     this.fetchActions();
@@ -90,10 +112,13 @@ img {
   margin-top: 15px;
 }
 
-.preco-variacao span {
-  color: red;
+.preco-variacao .high {
+  color: green;
 }
 
+.preco-variacao .low {
+  color: red;
+}
 @media screen and (max-width: 768px) {
   .container {
     flex-direction: column;
